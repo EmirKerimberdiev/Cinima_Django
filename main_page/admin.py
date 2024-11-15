@@ -1,11 +1,5 @@
-from django.http import HttpResponse
+from django.contrib import admin
+from . import models
 
-
-def first_lesson_django(request):
-    if request.method == 'GET':
-        return HttpResponse('Hello Djangos!!!')
-
-
-def picture_view(request):
-    if request.method == 'GET':
-        return HttpResponse('https://itproger.com/img/news/1592990176.jpg')
+admin.site.register(models.Films)
+admin.site.register(models.ReviewFilm)

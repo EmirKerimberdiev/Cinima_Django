@@ -1,5 +1,62 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse
+from django.views import generic
+from . import models
 
-# Create your views here.
-def first_lesson_django():
-    return None
+
+# film_list
+class FilmListView(generic.ListView):
+    template_name = 'show.html'
+    context_object_name = 'film_list'
+    model = models.Films
+
+    def get_queryset(self):
+        return models.Films.objects.filter().order_by('-id')
+
+
+class FilmDetailView(generic.DetailView):
+    template_name = 'show_detail.html'
+    context_object_name = 'film_id'
+
+    def get_object(self, **kwargs):
+        film_id = get_object_or_404(models.Films, id=self.kwargs['id'])
+
+
+# def films_list_view(request):
+#     if request.method == 'GET':
+#         film_list = models.Films.objects.filter().order_by('-id')
+#         context = {'film_list': film_list}
+#         return render(request, template_name='show.html', context=context)
+
+
+# detail film
+# def film_detail_view(request, id):
+#     if request.method == 'GET':
+#         film_id = get_object_or_404(models.Films, id=id)
+#         context = {'film_id': film_id}
+#         return render(request, template_name='show_detail.html', context=context)
+
+# Serch button
+class SearchView(generic.ListView):
+    template_name = 'show.html'
+    context_object_name = 'film_list'
+    paginate_by = 5
+
+    def get_queryset(self):
+        return models.Films.objects.filter(title__icontains=self.request.GET.get('q')).order_by('-id')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['q'] = self.request.GET.get('q')
+        return context
+
+
+
+def first_lesson_django(request):
+    if request.method == 'GET':
+        return HttpResponse('🐍Hello DJANGO TEMPLATES 🐍')
+
+
+def picture_view(request):
+    if request.method == 'GET':
+        return HttpResponse("<img src = 'https://itproger.com/img/news/1592990176.jpg'  >")
